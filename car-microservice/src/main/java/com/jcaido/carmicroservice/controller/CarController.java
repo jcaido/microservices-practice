@@ -36,6 +36,16 @@ public class CarController {
         return ResponseEntity.ok(car);
     }
 
+    @GetMapping("/byuser/{userId}")
+    public ResponseEntity<List<Car>> getCarsByUserId(@PathVariable("userId") int userId) {
+        List<Car> cars = carService.getCarsByUserId(userId);
+
+        if (cars.isEmpty())
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(cars);
+    }
+
     @PostMapping
     public ResponseEntity<Car> save(@RequestBody Car car) {
         return ResponseEntity.ok(carService.save(car));
