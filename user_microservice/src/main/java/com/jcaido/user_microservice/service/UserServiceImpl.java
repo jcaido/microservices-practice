@@ -4,6 +4,7 @@ import com.jcaido.user_microservice.entity.User;
 import com.jcaido.user_microservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -12,6 +13,9 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    RestTemplate restTemplate;
 
     @Override
     public List<User> getAll() {
