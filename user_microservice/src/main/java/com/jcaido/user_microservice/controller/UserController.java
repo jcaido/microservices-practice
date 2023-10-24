@@ -1,6 +1,7 @@
 package com.jcaido.user_microservice.controller;
 
 import com.jcaido.user_microservice.entity.User;
+import com.jcaido.user_microservice.models.Car;
 import com.jcaido.user_microservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,5 +39,15 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> save(@RequestBody User user) {
         return ResponseEntity.ok(userService.save(user));
+    }
+
+    @GetMapping("/cars/{userId}")
+    public ResponseEntity<List<Car>> getCars(@PathVariable("userId") int userId) {
+        User user = userService.getUserById(userId);
+        if (user == null)
+            return ResponseEntity.notFound().build();
+        
+        List<Car> cars = userService.getCars(userId);
+        return ResponseEntity.ok(cars);
     }
 }
