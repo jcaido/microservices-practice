@@ -1,8 +1,10 @@
 package com.jcaido.user_microservice.service;
 
 import com.jcaido.user_microservice.entity.User;
+import com.jcaido.user_microservice.feignclients.BikeFeignClient;
 import com.jcaido.user_microservice.feignclients.CarFeignClient;
 import com.jcaido.user_microservice.models.Bike;
+import com.jcaido.user_microservice.models.BikeFeign;
 import com.jcaido.user_microservice.models.Car;
 import com.jcaido.user_microservice.models.CarFeign;
 import com.jcaido.user_microservice.repository.UserRepository;
@@ -23,6 +25,9 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     CarFeignClient carFeignClient;
+
+    @Autowired
+    BikeFeignClient bikeFeignClient;
 
     @Override
     public List<User> getAll() {
@@ -58,6 +63,14 @@ public class UserServiceImpl implements UserService{
         car.setUserId(userId);
         CarFeign carNew = carFeignClient.save(car);
 
-        return carNew;
+        return car;
+    }
+
+    @Override
+    public BikeFeign saveBike(int userId, BikeFeign bike) {
+        bike.setUserId(userId);
+        BikeFeign bikeNew = bikeFeignClient.save(bike);
+
+        return bike;
     }
 }

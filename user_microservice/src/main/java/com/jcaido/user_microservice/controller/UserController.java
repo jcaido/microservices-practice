@@ -2,6 +2,7 @@ package com.jcaido.user_microservice.controller;
 
 import com.jcaido.user_microservice.entity.User;
 import com.jcaido.user_microservice.models.Bike;
+import com.jcaido.user_microservice.models.BikeFeign;
 import com.jcaido.user_microservice.models.Car;
 import com.jcaido.user_microservice.models.CarFeign;
 import com.jcaido.user_microservice.service.UserService;
@@ -68,5 +69,12 @@ public class UserController {
         CarFeign carNew = userService.saveCar(userId, car);
 
         return ResponseEntity.ok(carNew);
+    }
+
+    @PostMapping("/savebike/{userId}")
+    public ResponseEntity<BikeFeign> saveCar(@PathVariable("userId") int userId, @RequestBody BikeFeign bike) {
+        BikeFeign bikeNew = userService.saveBike(userId, bike);
+
+        return ResponseEntity.ok(bike);
     }
 }
