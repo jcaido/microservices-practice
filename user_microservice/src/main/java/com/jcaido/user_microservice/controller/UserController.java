@@ -75,6 +75,6 @@ public class UserController {
     public ResponseEntity<BikeFeign> saveCar(@PathVariable("userId") int userId, @RequestBody BikeFeign bike) {
         BikeFeign bikeNew = userService.saveBike(userId, bike);
 
-        return ResponseEntity.ok(bike);
+        return ResponseEntity.ok(bikeNew);
     }
 }

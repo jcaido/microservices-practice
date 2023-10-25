@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService{
         car.setUserId(userId);
         CarFeign carNew = carFeignClient.save(car);
 
-        return car;
+        return carNew;
     }
 
     @Override
@@ -71,6 +71,6 @@ public class UserServiceImpl implements UserService{
         bike.setUserId(userId);
         BikeFeign bikeNew = bikeFeignClient.save(bike);
 
-        return bike;
+        return bikeNew;
     }
 }
