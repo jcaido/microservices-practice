@@ -1,8 +1,10 @@
 package com.jcaido.user_microservice.service;
 
 import com.jcaido.user_microservice.entity.User;
+import com.jcaido.user_microservice.feignclients.CarFeignClient;
 import com.jcaido.user_microservice.models.Bike;
 import com.jcaido.user_microservice.models.Car;
+import com.jcaido.user_microservice.models.CarFeign;
 import com.jcaido.user_microservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,9 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     RestTemplate restTemplate;
+
+    @Autowired
+    CarFeignClient carFeignClient;
 
     @Override
     public List<User> getAll() {
@@ -46,5 +51,13 @@ public class UserServiceImpl implements UserService{
         List<Bike> bikes = restTemplate.getForObject("http://localhost:8003/bike/byuser/" + userId, List.class);
 
         return bikes;
+    }
+
+    @Override
+    public CarFeign saveCar(int userId, CarFeign car) {
+        car.setUserId(userId);
+        CarFeign carNew = carFeignClient.save(car);
+
+        return carNew;
     }
 }
