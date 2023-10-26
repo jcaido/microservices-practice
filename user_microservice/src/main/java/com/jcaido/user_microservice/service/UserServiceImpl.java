@@ -12,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -72,5 +75,31 @@ public class UserServiceImpl implements UserService{
         BikeFeign bikeNew = bikeFeignClient.save(bike);
 
         return bikeNew;
+    }
+
+    @Override
+    public Map<String, Object> getUserAndVehicles(int userId) {
+        Map<String, Object> result = new HashMap<>();
+        User user = userRepository.findById(userId).orElseThrow();
+
+        if (result == null) {
+            result.put("Mensaje", "no existe el usuario");
+            return result;
+        }
+
+        result.put("User", user);
+
+        List<CarFeign> cars = carFeignClient.getCarsByUserId(userId);
+        if (cars.isEmpty())
+            result.put("Cars", "ese usuario no tiene coches");
+        result.put("Cars", cars);
+
+        List<BikeFeign> bikes = bikeFeignClient.getBikesByUserId(userId);
+        if (bikes.isEmpty())
+            result.put("Bikes", "ese usuario no tiene bikes");
+        result.put("Bikes", bikes);
+
+        return result;
+
     }
 }

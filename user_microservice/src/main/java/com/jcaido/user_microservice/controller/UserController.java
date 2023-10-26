@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -81,5 +82,10 @@ public class UserController {
         BikeFeign bikeNew = userService.saveBike(userId, bike);
 
         return ResponseEntity.ok(bikeNew);
+    }
+
+    @GetMapping("/vehicles/{userId}")
+    public ResponseEntity<Map<String, Object>> getVehiclesByUser(@PathVariable("userId") int userId) {
+        return ResponseEntity.ok(userService.getUserAndVehicles(userId));
     }
 }

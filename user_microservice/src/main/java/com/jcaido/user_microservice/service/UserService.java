@@ -7,6 +7,8 @@ import com.jcaido.user_microservice.models.Car;
 import com.jcaido.user_microservice.models.CarFeign;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public interface UserService {
     List<User> getAll();
@@ -16,4 +18,5 @@ public interface UserService {
     List<Bike> getBikes(int userId);
     CarFeign saveCar(int usrId, CarFeign car);
     BikeFeign saveBike(int userId, BikeFeign bike);
+    Map<String, Object> getUserAndVehicles(int userId);
 }
