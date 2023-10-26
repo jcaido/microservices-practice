@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -80,9 +77,15 @@ public class UserServiceImpl implements UserService{
     @Override
     public Map<String, Object> getUserAndVehicles(int userId) {
         Map<String, Object> result = new HashMap<>();
-        User user = userRepository.findById(userId).orElseThrow();
+        //User user = userRepository.findById(userId).orElseThrow();
 
-        if (result == null) {
+        //if (user == null) {
+        //    result.put("Mensaje", "no existe el usuario");
+        //    return result;
+        //}
+
+        Optional<User> user = userRepository.findById(userId);
+        if (!user.isPresent()) {
             result.put("Mensaje", "no existe el usuario");
             return result;
         }
