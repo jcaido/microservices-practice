@@ -77,12 +77,6 @@ public class UserServiceImpl implements UserService{
     @Override
     public Map<String, Object> getUserAndVehicles(int userId) {
         Map<String, Object> result = new HashMap<>();
-        //User user = userRepository.findById(userId).orElseThrow();
-
-        //if (user == null) {
-        //    result.put("Mensaje", "no existe el usuario");
-        //    return result;
-        //}
 
         Optional<User> user = userRepository.findById(userId);
         if (!user.isPresent()) {
@@ -95,12 +89,14 @@ public class UserServiceImpl implements UserService{
         List<CarFeign> cars = carFeignClient.getCarsByUserId(userId);
         if (cars.isEmpty())
             result.put("Cars", "ese usuario no tiene coches");
-        result.put("Cars", cars);
+        else
+            result.put("Cars", cars);
 
         List<BikeFeign> bikes = bikeFeignClient.getBikesByUserId(userId);
         if (bikes.isEmpty())
             result.put("Bikes", "ese usuario no tiene bikes");
-        result.put("Bikes", bikes);
+        else
+            result.put("Bikes", bikes);
 
         return result;
 
