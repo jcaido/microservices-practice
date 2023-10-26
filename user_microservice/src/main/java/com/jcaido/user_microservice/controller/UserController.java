@@ -66,6 +66,9 @@ public class UserController {
 
     @PostMapping("/savecar/{userId}")
     public ResponseEntity<CarFeign> saveCar(@PathVariable("userId") int userId, @RequestBody CarFeign car) {
+        if (userService.getUserById(userId) == null)
+            return ResponseEntity.notFound().build();
+
         CarFeign carNew = userService.saveCar(userId, car);
 
         return ResponseEntity.ok(carNew);
