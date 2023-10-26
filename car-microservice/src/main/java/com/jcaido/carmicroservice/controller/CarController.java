@@ -39,9 +39,6 @@ public class CarController {
     public ResponseEntity<List<Car>> getCarsByUserId(@PathVariable("userId") int userId) {
         List<Car> cars = carService.getCarsByUserId(userId);
 
-        if (cars.isEmpty())
-            return ResponseEntity.noContent().build();
-
         return ResponseEntity.ok(cars);
     }
 

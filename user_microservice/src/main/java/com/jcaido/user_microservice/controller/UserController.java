@@ -2,13 +2,16 @@ package com.jcaido.user_microservice.controller;
 
 import com.jcaido.user_microservice.entity.User;
 import com.jcaido.user_microservice.models.Bike;
+import com.jcaido.user_microservice.models.BikeFeign;
 import com.jcaido.user_microservice.models.Car;
+import com.jcaido.user_microservice.models.CarFeign;
 import com.jcaido.user_microservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -60,5 +63,29 @@ public class UserController {
 
         List<Bike> bikes = userService.getBikes(userId);
         return ResponseEntity.ok(bikes);
+    }
+
+    @PostMapping("/savecar/{userId}")
+    public ResponseEntity<CarFeign> saveCar(@PathVariable("userId") int userId, @RequestBody CarFeign car) {
+        if (userService.getUserById(userId) == null)
+            return ResponseEntity.notFound().build();
+
+        CarFeign carNew = userService.saveCar(userId, car);
+
+        return ResponseEntity.ok(carNew);
+    }
+
+    @PostMapping("/savebike/{userId}")
+    public ResponseEntity<BikeFeign> saveCar(@PathVariable("userId") int userId, @RequestBody BikeFeign bike) {
+        if (userService.getUserById(userId) == null)
+            return ResponseEntity.notFound().build();
+        BikeFeign bikeNew = userService.saveBike(userId, bike);
+
+        return ResponseEntity.ok(bikeNew);
+    }
+
+    @GetMapping("/vehicles/{userId}")
+    public ResponseEntity<Map<String, Object>> getVehiclesByUser(@PathVariable("userId") int userId) {
+        return ResponseEntity.ok(userService.getUserAndVehicles(userId));
     }
 }

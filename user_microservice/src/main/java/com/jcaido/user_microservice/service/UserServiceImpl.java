@@ -1,14 +1,18 @@
 package com.jcaido.user_microservice.service;
 
 import com.jcaido.user_microservice.entity.User;
+import com.jcaido.user_microservice.feignclients.BikeFeignClient;
+import com.jcaido.user_microservice.feignclients.CarFeignClient;
 import com.jcaido.user_microservice.models.Bike;
+import com.jcaido.user_microservice.models.BikeFeign;
 import com.jcaido.user_microservice.models.Car;
+import com.jcaido.user_microservice.models.CarFeign;
 import com.jcaido.user_microservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -18,6 +22,12 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     RestTemplate restTemplate;
+
+    @Autowired
+    CarFeignClient carFeignClient;
+
+    @Autowired
+    BikeFeignClient bikeFeignClient;
 
     @Override
     public List<User> getAll() {
@@ -46,5 +56,49 @@ public class UserServiceImpl implements UserService{
         List<Bike> bikes = restTemplate.getForObject("http://localhost:8003/bike/byuser/" + userId, List.class);
 
         return bikes;
+    }
+
+    @Override
+    public CarFeign saveCar(int userId, CarFeign car) {
+        car.setUserId(userId);
+        CarFeign carNew = carFeignClient.save(car);
+
+        return carNew;
+    }
+
+    @Override
+    public BikeFeign saveBike(int userId, BikeFeign bike) {
+        bike.setUserId(userId);
+        BikeFeign bikeNew = bikeFeignClient.save(bike);
+
+        return bikeNew;
+    }
+
+    @Override
+    public Map<String, Object> getUserAndVehicles(int userId) {
+        Map<String, Object> result = new HashMap<>();
+
+        Optional<User> user = userRepository.findById(userId);
+        if (!user.isPresent()) {
+            result.put("Mensaje", "no existe el usuario");
+            return result;
+        }
+
+        result.put("User", user);
+
+        List<CarFeign> cars = carFeignClient.getCarsByUserId(userId);
+        if (cars.isEmpty())
+            result.put("Cars", "ese usuario no tiene coches");
+        else
+            result.put("Cars", cars);
+
+        List<BikeFeign> bikes = bikeFeignClient.getBikesByUserId(userId);
+        if (bikes.isEmpty())
+            result.put("Bikes", "ese usuario no tiene bikes");
+        else
+            result.put("Bikes", bikes);
+
+        return result;
+
     }
 }
