@@ -38,6 +38,6 @@ public class CarController {
 
     @PostMapping
     public ResponseEntity<Car> save(@RequestBody Car car) {
-        return ResponseEntity.ok(carService.save(car));
+        return new ResponseEntity<>(carService.save(car), HttpStatus.OK);
     }
 }
