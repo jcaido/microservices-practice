@@ -1,11 +1,13 @@
 package com.jcaido.bikeservice.service;
 
 import com.jcaido.bikeservice.entity.Bike;
+import com.jcaido.bikeservice.exceptions.ResourceNotFoundException;
 import com.jcaido.bikeservice.repository.BikeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BikeServiceImpl implements BikeService{
@@ -22,7 +24,11 @@ public class BikeServiceImpl implements BikeService{
 
     @Override
     public Bike getBikeById(int id) {
-        return bikeRepository.findById(id).orElseThrow();
+        Optional<Bike> bike = bikeRepository.findById(id);
+        if (!bike.isPresent())
+            throw new ResourceNotFoundException("Bike don't exist");
+
+        return bike.orElseThrow();
     }
 
     @Override
