@@ -25,21 +25,19 @@ public class BikeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Bike> getBikeById(@PathVariable("id") int id) {
-        
+
         return new ResponseEntity<>(bikeService.getBikeById(id), HttpStatus.OK);
     }
 
     @GetMapping("/byuser/{userId}")
     public ResponseEntity<List<Bike>> getBikesByUserId(@PathVariable("userId") int userId) {
-        List<Bike> bikes = bikeService.getBikesByUserId(userId);
 
-        return ResponseEntity.ok(bikes);
+        return new ResponseEntity<>(bikeService.getBikesByUserId(userId), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<Bike> save(@RequestBody Bike bike) {
         return ResponseEntity.ok(bikeService.save(bike));
     }
-
 
 }

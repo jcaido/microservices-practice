@@ -33,6 +33,7 @@ public class BikeServiceImpl implements BikeService{
 
     @Override
     public List<Bike> getBikesByUserId(int userId) {
+
         return bikeRepository.findByUserId(userId);
     }
 
