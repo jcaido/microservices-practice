@@ -31,9 +31,8 @@ public class CarController {
 
     @GetMapping("/byuser/{userId}")
     public ResponseEntity<List<Car>> getCarsByUserId(@PathVariable("userId") int userId) {
-        List<Car> cars = carService.getCarsByUserId(userId);
 
-        return ResponseEntity.ok(cars);
+        return new ResponseEntity<>(carService.getCarsByUserId(userId), HttpStatus.OK);
     }
 
     @PostMapping
