@@ -3,6 +3,7 @@ package com.jcaido.bikeservice.controller;
 import com.jcaido.bikeservice.entity.Bike;
 import com.jcaido.bikeservice.service.BikeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,12 +18,8 @@ public class BikeController {
 
     @GetMapping
     public ResponseEntity<List<Bike>> getAll() {
-        List<Bike> bikes = bikeService.getAll();
-
-        if (bikes.isEmpty())
-            return ResponseEntity.noContent().build();
-
-        return ResponseEntity.ok(bikes);
+        
+        return new ResponseEntity<>(bikeService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

@@ -15,7 +15,9 @@ public class BikeServiceImpl implements BikeService{
 
     @Override
     public List<Bike> getAll() {
-        return bikeRepository.findAll();
+        List<Bike> bikes = bikeRepository.findAll();
+
+        return bikes;
     }
 
     @Override
