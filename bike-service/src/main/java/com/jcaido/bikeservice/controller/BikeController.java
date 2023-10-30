@@ -3,7 +3,6 @@ package com.jcaido.bikeservice.controller;
 import com.jcaido.bikeservice.entity.Bike;
 import com.jcaido.bikeservice.service.BikeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.rsocket.context.RSocketPortInfoApplicationContextInitializer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +36,8 @@ public class BikeController {
 
     @PostMapping
     public ResponseEntity<Bike> save(@RequestBody Bike bike) {
-        return ResponseEntity.ok(bikeService.save(bike));
+
+        return new ResponseEntity<>(bikeService.save(bike), HttpStatus.OK);
     }
 
 }
