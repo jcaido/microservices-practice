@@ -3,9 +3,11 @@ package com.jcaido.carmicroservice.controller;
 import com.jcaido.carmicroservice.entity.Car;
 import com.jcaido.carmicroservice.service.CarService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.NotContextException;
 import java.util.List;
 
 @RestController
@@ -16,34 +18,25 @@ public class CarController {
     CarService carService;
 
     @GetMapping
-    public ResponseEntity<List<Car>> getAll() {
-        List<Car> cars = carService.getAll();
+    public ResponseEntity<List<Car>> getAll() throws NotContextException {
 
-        if (cars.isEmpty())
-            return ResponseEntity.noContent().build();
-
-        return ResponseEntity.ok(cars);
+        return new ResponseEntity<>(carService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Car> getCarById(@PathVariable("id") int id) {
-        Car car = carService.getCarById(id);
 
-        if (car == null)
-            return ResponseEntity.notFound().build();
-
-        return ResponseEntity.ok(car);
+        return new ResponseEntity<>(carService.getCarById(id), HttpStatus.OK);
     }
 
     @GetMapping("/byuser/{userId}")
     public ResponseEntity<List<Car>> getCarsByUserId(@PathVariable("userId") int userId) {
-        List<Car> cars = carService.getCarsByUserId(userId);
 
-        return ResponseEntity.ok(cars);
+        return new ResponseEntity<>(carService.getCarsByUserId(userId), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<Car> save(@RequestBody Car car) {
-        return ResponseEntity.ok(carService.save(car));
+        return new ResponseEntity<>(carService.save(car), HttpStatus.OK);
     }
 }
