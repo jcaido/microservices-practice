@@ -29,7 +29,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getById(@PathVariable("id") int id) {
-        
+
         return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
 
@@ -40,12 +40,8 @@ public class UserController {
 
     @GetMapping("/cars/{userId}")
     public ResponseEntity<List<Car>> getCars(@PathVariable("userId") int userId) {
-        User user = userService.getUserById(userId);
-        if (user == null)
-            return ResponseEntity.notFound().build();
-
-        List<Car> cars = userService.getCars(userId);
-        return ResponseEntity.ok(cars);
+        t
+        return new ResponseEntity<>(userService.getCars(userId), HttpStatus.OK);
     }
 
     @GetMapping("/bikes/{userId}")

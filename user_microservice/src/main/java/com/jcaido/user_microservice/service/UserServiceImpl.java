@@ -51,6 +51,10 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public List<Car> getCars(int userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (!user.isPresent())
+            throw new ResourceNotFoundException("User don't exist");
+
         List<Car> cars = restTemplate.getForObject("http://localhost:8002/car/byuser/" + userId, List.class);
 
         return cars;
