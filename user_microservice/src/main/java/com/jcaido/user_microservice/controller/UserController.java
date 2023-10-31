@@ -7,6 +7,7 @@ import com.jcaido.user_microservice.models.Car;
 import com.jcaido.user_microservice.models.CarFeign;
 import com.jcaido.user_microservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,12 +23,8 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<User>> getAll() {
-        List<User> users = userService.getAll();
-
-        if (users.isEmpty())
-            return ResponseEntity.noContent().build();
-
-        return ResponseEntity.ok(users);
+        
+        return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
