@@ -35,7 +35,9 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> save(@RequestBody User user) {
-        return ResponseEntity.ok(userService.save(user));
+
+
+        return new ResponseEntity<>(userService.save(user), HttpStatus.OK);
     }
 
     @GetMapping("/cars/{userId}")
@@ -64,7 +66,7 @@ public class UserController {
 
     @GetMapping("/vehicles/{userId}")
     public ResponseEntity<Map<String, Object>> getVehiclesByUser(@PathVariable("userId") int userId) {
-        
+
         return new ResponseEntity<>(userService.getUserAndVehicles(userId), HttpStatus.OK);
     }
 }
