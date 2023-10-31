@@ -58,12 +58,13 @@ public class UserController {
 
     @PostMapping("/savebike/{userId}")
     public ResponseEntity<BikeFeign> saveCar(@PathVariable("userId") int userId, @RequestBody BikeFeign bike) {
-        
+
         return new ResponseEntity<>(userService.saveBike(userId, bike), HttpStatus.OK);
     }
 
     @GetMapping("/vehicles/{userId}")
     public ResponseEntity<Map<String, Object>> getVehiclesByUser(@PathVariable("userId") int userId) {
-        return ResponseEntity.ok(userService.getUserAndVehicles(userId));
+        
+        return new ResponseEntity<>(userService.getUserAndVehicles(userId), HttpStatus.OK);
     }
 }

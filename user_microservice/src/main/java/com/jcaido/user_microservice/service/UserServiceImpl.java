@@ -101,21 +101,20 @@ public class UserServiceImpl implements UserService{
 
         Optional<User> user = userRepository.findById(userId);
         if (!user.isPresent()) {
-            result.put("Mensaje", "no existe el usuario");
-            return result;
+            throw new ResourceNotFoundException("User don't exist");
         }
 
         result.put("User", user);
 
         List<CarFeign> cars = carFeignClient.getCarsByUserId(userId);
         if (cars.isEmpty())
-            result.put("Cars", "ese usuario no tiene coches");
+            result.put("Cars", "that user haven't got cars");
         else
             result.put("Cars", cars);
 
         List<BikeFeign> bikes = bikeFeignClient.getBikesByUserId(userId);
         if (bikes.isEmpty())
-            result.put("Bikes", "ese usuario no tiene bikes");
+            result.put("Bikes", "that user haven't got bikes");
         else
             result.put("Bikes", bikes);
 
