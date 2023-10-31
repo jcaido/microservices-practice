@@ -40,18 +40,14 @@ public class UserController {
 
     @GetMapping("/cars/{userId}")
     public ResponseEntity<List<Car>> getCars(@PathVariable("userId") int userId) {
-        t
+
         return new ResponseEntity<>(userService.getCars(userId), HttpStatus.OK);
     }
 
     @GetMapping("/bikes/{userId}")
     public ResponseEntity<List<Bike>> getBikes(@PathVariable("userId") int userId) {
-        User user = userService.getUserById(userId);
-        if (user == null)
-            return ResponseEntity.notFound().build();
-
-        List<Bike> bikes = userService.getBikes(userId);
-        return ResponseEntity.ok(bikes);
+        
+        return new ResponseEntity<>(userService.getBikes(userId), HttpStatus.OK);
     }
 
     @PostMapping("/savecar/{userId}")
