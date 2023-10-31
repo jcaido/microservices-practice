@@ -7,6 +7,7 @@ import com.jcaido.user_microservice.models.Car;
 import com.jcaido.user_microservice.models.CarFeign;
 import com.jcaido.user_microservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,70 +23,50 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<User>> getAll() {
-        List<User> users = userService.getAll();
 
-        if (users.isEmpty())
-            return ResponseEntity.noContent().build();
-
-        return ResponseEntity.ok(users);
+        return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getById(@PathVariable("id") int id) {
-        User user = userService.getUserById(id);
 
-        if (user == null)
-            return ResponseEntity.notFound().build();
-
-        return ResponseEntity.ok(user);
+        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<User> save(@RequestBody User user) {
-        return ResponseEntity.ok(userService.save(user));
+
+
+        return new ResponseEntity<>(userService.save(user), HttpStatus.OK);
     }
 
     @GetMapping("/cars/{userId}")
     public ResponseEntity<List<Car>> getCars(@PathVariable("userId") int userId) {
-        User user = userService.getUserById(userId);
-        if (user == null)
-            return ResponseEntity.notFound().build();
 
-        List<Car> cars = userService.getCars(userId);
-        return ResponseEntity.ok(cars);
+        return new ResponseEntity<>(userService.getCars(userId), HttpStatus.OK);
     }
 
     @GetMapping("/bikes/{userId}")
     public ResponseEntity<List<Bike>> getBikes(@PathVariable("userId") int userId) {
-        User user = userService.getUserById(userId);
-        if (user == null)
-            return ResponseEntity.notFound().build();
 
-        List<Bike> bikes = userService.getBikes(userId);
-        return ResponseEntity.ok(bikes);
+        return new ResponseEntity<>(userService.getBikes(userId), HttpStatus.OK);
     }
 
     @PostMapping("/savecar/{userId}")
     public ResponseEntity<CarFeign> saveCar(@PathVariable("userId") int userId, @RequestBody CarFeign car) {
-        if (userService.getUserById(userId) == null)
-            return ResponseEntity.notFound().build();
 
-        CarFeign carNew = userService.saveCar(userId, car);
-
-        return ResponseEntity.ok(carNew);
+        return new ResponseEntity<>(userService.saveCar(userId, car), HttpStatus.OK);
     }
 
     @PostMapping("/savebike/{userId}")
     public ResponseEntity<BikeFeign> saveCar(@PathVariable("userId") int userId, @RequestBody BikeFeign bike) {
-        if (userService.getUserById(userId) == null)
-            return ResponseEntity.notFound().build();
-        BikeFeign bikeNew = userService.saveBike(userId, bike);
 
-        return ResponseEntity.ok(bikeNew);
+        return new ResponseEntity<>(userService.saveBike(userId, bike), HttpStatus.OK);
     }
 
     @GetMapping("/vehicles/{userId}")
     public ResponseEntity<Map<String, Object>> getVehiclesByUser(@PathVariable("userId") int userId) {
-        return ResponseEntity.ok(userService.getUserAndVehicles(userId));
+
+        return new ResponseEntity<>(userService.getUserAndVehicles(userId), HttpStatus.OK);
     }
 }

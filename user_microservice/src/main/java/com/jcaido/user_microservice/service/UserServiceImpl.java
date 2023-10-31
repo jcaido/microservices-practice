@@ -1,6 +1,7 @@
 package com.jcaido.user_microservice.service;
 
 import com.jcaido.user_microservice.entity.User;
+import com.jcaido.user_microservice.exceptions.ResourceNotFoundException;
 import com.jcaido.user_microservice.feignclients.BikeFeignClient;
 import com.jcaido.user_microservice.feignclients.CarFeignClient;
 import com.jcaido.user_microservice.models.Bike;
@@ -36,7 +37,11 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User getUserById(int id) {
-        return userRepository.findById(id).orElseThrow();
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent())
+            throw new ResourceNotFoundException("User don't exist");
+
+        return user.orElseThrow();
     }
 
     @Override
@@ -46,6 +51,10 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public List<Car> getCars(int userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (!user.isPresent())
+            throw new ResourceNotFoundException("User don't exist");
+
         List<Car> cars = restTemplate.getForObject("http://localhost:8002/car/byuser/" + userId, List.class);
 
         return cars;
@@ -53,6 +62,10 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public List<Bike> getBikes(int userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (!user.isPresent())
+            throw new ResourceNotFoundException("User don't exist");
+
         List<Bike> bikes = restTemplate.getForObject("http://localhost:8003/bike/byuser/" + userId, List.class);
 
         return bikes;
@@ -60,6 +73,10 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public CarFeign saveCar(int userId, CarFeign car) {
+        Optional<User> user = userRepository.findById(userId);
+        if (!user.isPresent())
+            throw new ResourceNotFoundException("User don't exist");
+
         car.setUserId(userId);
         CarFeign carNew = carFeignClient.save(car);
 
@@ -68,6 +85,10 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public BikeFeign saveBike(int userId, BikeFeign bike) {
+        Optional<User> user = userRepository.findById(userId);
+        if (!user.isPresent())
+            throw new ResourceNotFoundException("User don't exist");
+
         bike.setUserId(userId);
         BikeFeign bikeNew = bikeFeignClient.save(bike);
 
@@ -80,21 +101,20 @@ public class UserServiceImpl implements UserService{
 
         Optional<User> user = userRepository.findById(userId);
         if (!user.isPresent()) {
-            result.put("Mensaje", "no existe el usuario");
-            return result;
+            throw new ResourceNotFoundException("User don't exist");
         }
 
         result.put("User", user);
 
         List<CarFeign> cars = carFeignClient.getCarsByUserId(userId);
         if (cars.isEmpty())
-            result.put("Cars", "ese usuario no tiene coches");
+            result.put("Cars", "that user haven't got cars");
         else
             result.put("Cars", cars);
 
         List<BikeFeign> bikes = bikeFeignClient.getBikesByUserId(userId);
         if (bikes.isEmpty())
-            result.put("Bikes", "ese usuario no tiene bikes");
+            result.put("Bikes", "that user haven't got bikes");
         else
             result.put("Bikes", bikes);
 
