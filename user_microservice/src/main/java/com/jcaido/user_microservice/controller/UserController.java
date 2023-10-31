@@ -46,18 +46,14 @@ public class UserController {
 
     @GetMapping("/bikes/{userId}")
     public ResponseEntity<List<Bike>> getBikes(@PathVariable("userId") int userId) {
-        
+
         return new ResponseEntity<>(userService.getBikes(userId), HttpStatus.OK);
     }
 
     @PostMapping("/savecar/{userId}")
     public ResponseEntity<CarFeign> saveCar(@PathVariable("userId") int userId, @RequestBody CarFeign car) {
-        if (userService.getUserById(userId) == null)
-            return ResponseEntity.notFound().build();
-
-        CarFeign carNew = userService.saveCar(userId, car);
-
-        return ResponseEntity.ok(carNew);
+        
+        return new ResponseEntity<>(userService.saveCar(userId, car), HttpStatus.OK);
     }
 
     @PostMapping("/savebike/{userId}")

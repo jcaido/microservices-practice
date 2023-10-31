@@ -73,6 +73,10 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public CarFeign saveCar(int userId, CarFeign car) {
+        Optional<User> user = userRepository.findById(userId);
+        if (!user.isPresent())
+            throw new ResourceNotFoundException("User don't exist");
+
         car.setUserId(userId);
         CarFeign carNew = carFeignClient.save(car);
 
