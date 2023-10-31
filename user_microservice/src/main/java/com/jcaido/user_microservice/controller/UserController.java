@@ -23,18 +23,14 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<User>> getAll() {
-        
+
         return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getById(@PathVariable("id") int id) {
-        User user = userService.getUserById(id);
-
-        if (user == null)
-            return ResponseEntity.notFound().build();
-
-        return ResponseEntity.ok(user);
+        
+        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
 
     @PostMapping

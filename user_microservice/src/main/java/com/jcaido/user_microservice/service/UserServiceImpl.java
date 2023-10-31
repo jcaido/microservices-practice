@@ -1,6 +1,7 @@
 package com.jcaido.user_microservice.service;
 
 import com.jcaido.user_microservice.entity.User;
+import com.jcaido.user_microservice.exceptions.ResourceNotFoundException;
 import com.jcaido.user_microservice.feignclients.BikeFeignClient;
 import com.jcaido.user_microservice.feignclients.CarFeignClient;
 import com.jcaido.user_microservice.models.Bike;
@@ -36,7 +37,11 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User getUserById(int id) {
-        return userRepository.findById(id).orElseThrow();
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent())
+            throw new ResourceNotFoundException("User don't exist");
+
+        return user.orElseThrow();
     }
 
     @Override
