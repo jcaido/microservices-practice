@@ -85,6 +85,10 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public BikeFeign saveBike(int userId, BikeFeign bike) {
+        Optional<User> user = userRepository.findById(userId);
+        if (!user.isPresent())
+            throw new ResourceNotFoundException("User don't exist");
+
         bike.setUserId(userId);
         BikeFeign bikeNew = bikeFeignClient.save(bike);
 

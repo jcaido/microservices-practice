@@ -52,17 +52,14 @@ public class UserController {
 
     @PostMapping("/savecar/{userId}")
     public ResponseEntity<CarFeign> saveCar(@PathVariable("userId") int userId, @RequestBody CarFeign car) {
-        
+
         return new ResponseEntity<>(userService.saveCar(userId, car), HttpStatus.OK);
     }
 
     @PostMapping("/savebike/{userId}")
     public ResponseEntity<BikeFeign> saveCar(@PathVariable("userId") int userId, @RequestBody BikeFeign bike) {
-        if (userService.getUserById(userId) == null)
-            return ResponseEntity.notFound().build();
-        BikeFeign bikeNew = userService.saveBike(userId, bike);
-
-        return ResponseEntity.ok(bikeNew);
+        
+        return new ResponseEntity<>(userService.saveBike(userId, bike), HttpStatus.OK);
     }
 
     @GetMapping("/vehicles/{userId}")
