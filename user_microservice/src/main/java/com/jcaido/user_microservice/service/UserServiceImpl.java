@@ -10,6 +10,8 @@ import com.jcaido.user_microservice.models.Car;
 import com.jcaido.user_microservice.models.CarFeign;
 import com.jcaido.user_microservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -29,6 +31,9 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     BikeFeignClient bikeFeignClient;
+
+    @Autowired
+    CircuitBreakerFactory circuitBreakerFactory;
 
     @Override
     public List<User> getAll() {
@@ -55,9 +60,15 @@ public class UserServiceImpl implements UserService{
         if (!user.isPresent())
             throw new ResourceNotFoundException("User don't exist");
 
-        List<Car> cars = restTemplate.getForObject("http://car-service/car/byuser/" + userId, List.class);
+        CircuitBreaker circuit = circuitBreakerFactory.create("circuit1");
+        return circuit.run(() ->
+                        restTemplate.getForObject("http://car-service/car/byuser/" + userId, List.class),
+                        t -> new ArrayList<Car>()
+                );
 
-        return cars;
+        //List<Car> cars = restTemplate.getForObject("http://car-service/car/byuser/" + userId, List.class);
+
+        //return cars;
     }
 
     @Override
