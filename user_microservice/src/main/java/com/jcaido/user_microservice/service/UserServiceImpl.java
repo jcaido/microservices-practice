@@ -73,9 +73,11 @@ public class UserServiceImpl implements UserService{
         if (!user.isPresent())
             throw new ResourceNotFoundException("User don't exist");
 
-        List<Bike> bikes = restTemplate.getForObject("http://bike-service/bike/byuser/" + userId, List.class);
-
-        return bikes;
+        CircuitBreaker circuit = circuitBreakerFactory.create("circuit2");
+        return circuit.run(() ->
+                restTemplate.getForObject("http://bike-service/bike/byuser/" + userId, List.class),
+                t -> new ArrayList<Bike>()
+        );
     }
 
     @Override
