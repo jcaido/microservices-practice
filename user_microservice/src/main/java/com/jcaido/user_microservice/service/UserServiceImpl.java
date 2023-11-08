@@ -65,10 +65,6 @@ public class UserServiceImpl implements UserService{
                         restTemplate.getForObject("http://car-service/car/byuser/" + userId, List.class),
                         t -> new ArrayList<Car>()
                 );
-
-        //List<Car> cars = restTemplate.getForObject("http://car-service/car/byuser/" + userId, List.class);
-
-        //return cars;
     }
 
     @Override
