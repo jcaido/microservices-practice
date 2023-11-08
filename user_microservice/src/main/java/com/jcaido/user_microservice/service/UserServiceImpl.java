@@ -102,9 +102,12 @@ public class UserServiceImpl implements UserService{
             throw new ResourceNotFoundException("User don't exist");
 
         bike.setUserId(userId);
-        BikeFeign bikeNew = bikeFeignClient.save(bike);
 
-        return bikeNew;
+        CircuitBreaker circuit = circuitBreakerFactory.create("circuit4");
+        return circuit.run(() ->
+                bikeFeignClient.save(bike),
+                t -> new BikeFeign("", "", 0)
+        );
     }
 
     @Override
