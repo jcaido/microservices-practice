@@ -87,9 +87,12 @@ public class UserServiceImpl implements UserService{
             throw new ResourceNotFoundException("User don't exist");
 
         car.setUserId(userId);
-        CarFeign carNew = carFeignClient.save(car);
 
-        return carNew;
+        CircuitBreaker circuit = circuitBreakerFactory.create("circuit3");
+        return circuit.run(() ->
+                carFeignClient.save(car),
+                t -> new CarFeign("", "",0)
+        );
     }
 
     @Override
