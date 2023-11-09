@@ -10,10 +10,14 @@ import com.jcaido.user_microservice.models.Car;
 import com.jcaido.user_microservice.models.CarFeign;
 import com.jcaido.user_microservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -29,6 +33,9 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     BikeFeignClient bikeFeignClient;
+
+    @Autowired
+    CircuitBreakerFactory circuitBreakerFactory;
 
     @Override
     public List<User> getAll() {
@@ -55,9 +62,11 @@ public class UserServiceImpl implements UserService{
         if (!user.isPresent())
             throw new ResourceNotFoundException("User don't exist");
 
-        List<Car> cars = restTemplate.getForObject("http://car-service/car/byuser/" + userId, List.class);
-
-        return cars;
+        CircuitBreaker circuit = circuitBreakerFactory.create("circuit1");
+        return circuit.run(() ->
+                        restTemplate.getForObject("http://car-service/car/byuser/" + userId, List.class),
+                        t -> new ArrayList<Car>()
+                );
     }
 
     @Override
@@ -66,9 +75,11 @@ public class UserServiceImpl implements UserService{
         if (!user.isPresent())
             throw new ResourceNotFoundException("User don't exist");
 
-        List<Bike> bikes = restTemplate.getForObject("http://bike-service/bike/byuser/" + userId, List.class);
-
-        return bikes;
+        CircuitBreaker circuit = circuitBreakerFactory.create("circuit2");
+        return circuit.run(() ->
+                restTemplate.getForObject("http://bike-service/bike/byuser/" + userId, List.class),
+                t -> new ArrayList<Bike>()
+        );
     }
 
     @Override
@@ -78,9 +89,12 @@ public class UserServiceImpl implements UserService{
             throw new ResourceNotFoundException("User don't exist");
 
         car.setUserId(userId);
-        CarFeign carNew = carFeignClient.save(car);
 
-        return carNew;
+        CircuitBreaker circuit = circuitBreakerFactory.create("circuit3");
+        return circuit.run(() ->
+                carFeignClient.save(car),
+                t -> new CarFeign("", "",0)
+        );
     }
 
     @Override
@@ -90,35 +104,45 @@ public class UserServiceImpl implements UserService{
             throw new ResourceNotFoundException("User don't exist");
 
         bike.setUserId(userId);
-        BikeFeign bikeNew = bikeFeignClient.save(bike);
 
-        return bikeNew;
+        CircuitBreaker circuit = circuitBreakerFactory.create("circuit4");
+        return circuit.run(() ->
+                bikeFeignClient.save(bike),
+                t -> new BikeFeign("", "", 0)
+        );
     }
 
     @Override
     public Map<String, Object> getUserAndVehicles(int userId) {
-        Map<String, Object> result = new HashMap<>();
-
         Optional<User> user = userRepository.findById(userId);
         if (!user.isPresent()) {
             throw new ResourceNotFoundException("User don't exist");
         }
 
+        Map<String, Object> result = new HashMap<>();
         result.put("User", user);
 
-        List<CarFeign> cars = carFeignClient.getCarsByUserId(userId);
-        if (cars.isEmpty())
-            result.put("Cars", "that user haven't got cars");
-        else
-            result.put("Cars", cars);
+        CircuitBreaker circuit = circuitBreakerFactory.create("circuit5");
+        return circuit.run(() -> {
+                    List<CarFeign> cars = carFeignClient.getCarsByUserId(userId);
+                    if (cars.isEmpty())
+                        result.put("Cars", "that user haven't got cars");
+                    else
+                        result.put("Cars", cars);
 
-        List<BikeFeign> bikes = bikeFeignClient.getBikesByUserId(userId);
-        if (bikes.isEmpty())
-            result.put("Bikes", "that user haven't got bikes");
-        else
-            result.put("Bikes", bikes);
+                    List<BikeFeign> bikes = bikeFeignClient.getBikesByUserId(userId);
+                    if (bikes.isEmpty())
+                        result.put("Bikes", "that user haven't got bikes");
+                    else
+                        result.put("Bikes", bikes);
 
-        return result;
+                    return result;
+                }, t -> {
+                    if (!result.containsKey("Cars") || !result.containsKey("Bikes"))
+                        result.put("Vehicles", "car or bike service are not availables");
 
+                    return result;
+                }
+        );
     }
 }
