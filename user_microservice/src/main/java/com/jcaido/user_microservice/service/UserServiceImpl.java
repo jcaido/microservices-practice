@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -112,28 +114,35 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Map<String, Object> getUserAndVehicles(int userId) {
-        Map<String, Object> result = new HashMap<>();
-
         Optional<User> user = userRepository.findById(userId);
         if (!user.isPresent()) {
             throw new ResourceNotFoundException("User don't exist");
         }
 
+        Map<String, Object> result = new HashMap<>();
         result.put("User", user);
 
-        List<CarFeign> cars = carFeignClient.getCarsByUserId(userId);
-        if (cars.isEmpty())
-            result.put("Cars", "that user haven't got cars");
-        else
-            result.put("Cars", cars);
+        CircuitBreaker circuit = circuitBreakerFactory.create("circuit5");
+        return circuit.run(() -> {
+                    List<CarFeign> cars = carFeignClient.getCarsByUserId(userId);
+                    if (cars.isEmpty())
+                        result.put("Cars", "that user haven't got cars");
+                    else
+                        result.put("Cars", cars);
 
-        List<BikeFeign> bikes = bikeFeignClient.getBikesByUserId(userId);
-        if (bikes.isEmpty())
-            result.put("Bikes", "that user haven't got bikes");
-        else
-            result.put("Bikes", bikes);
+                    List<BikeFeign> bikes = bikeFeignClient.getBikesByUserId(userId);
+                    if (bikes.isEmpty())
+                        result.put("Bikes", "that user haven't got bikes");
+                    else
+                        result.put("Bikes", bikes);
 
-        return result;
+                    return result;
+                }, t -> {
+                    if (!result.containsKey("Cars") || !result.containsKey("Bikes"))
+                        result.put("Vehicles", "car or bike service are not availables");
 
+                    return result;
+                }
+        );
     }
 }
