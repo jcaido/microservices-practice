@@ -76,7 +76,11 @@ public class UserController {
         return new ResponseEntity<>(userService.getUserAndVehicles(userId), HttpStatus.OK);
     }
 
-    private ResponseEntity<List<Car>> fallBackGetCars(@PathVariable("userId") int userId) {
+    private ResponseEntity<List<Car>> fallBackGetCars(@PathVariable("userId") int userId, RuntimeException e) {
+        return new ResponseEntity("car service is not available", HttpStatus.OK);
+    }
+
+    private ResponseEntity<CarFeign> fallBackSaveCar(@PathVariable("userId") int userId, @RequestBody CarFeign car, RuntimeException e) {
         return new ResponseEntity("car service is not available", HttpStatus.OK);
     }
 }
