@@ -91,4 +91,8 @@ public class UserController {
     private ResponseEntity<BikeFeign> fallBackSaveBike(@PathVariable("userId") int userId, @RequestBody BikeFeign bike, RuntimeException e) {
         return new ResponseEntity("bike service is not available", HttpStatus.OK);
     }
+
+    private ResponseEntity<Map<String, Object>> fallBackGetVehiclesByUser(@PathVariable("userId") int userId, RuntimeException e) {
+        return new ResponseEntity("vehicles service are not available", HttpStatus.OK);
+    }
 }
