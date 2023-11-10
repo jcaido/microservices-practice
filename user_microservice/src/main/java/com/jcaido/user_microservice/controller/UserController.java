@@ -48,18 +48,17 @@ public class UserController {
         return new ResponseEntity<>(userService.getCars(userId), HttpStatus.OK);
     }
 
-    @GetMapping("/bikes/{userId}")
-    public ResponseEntity<List<Bike>> getBikes(@PathVariable("userId") int userId) {
-
-        return new ResponseEntity<>(userService.getBikes(userId), HttpStatus.OK);
-    }
-
+    @CircuitBreaker(name = "carsCB", fallbackMethod = "fallBackSaveCar")
     @PostMapping("/savecar/{userId}")
     public ResponseEntity<CarFeign> saveCar(@PathVariable("userId") int userId, @RequestBody CarFeign car) {
 
         return new ResponseEntity<>(userService.saveCar(userId, car), HttpStatus.OK);
     }
+    @GetMapping("/bikes/{userId}")
+    public ResponseEntity<List<Bike>> getBikes(@PathVariable("userId") int userId) {
 
+        return new ResponseEntity<>(userService.getBikes(userId), HttpStatus.OK);
+    }
     @PostMapping("/savebike/{userId}")
     public ResponseEntity<BikeFeign> saveCar(@PathVariable("userId") int userId, @RequestBody BikeFeign bike) {
 
