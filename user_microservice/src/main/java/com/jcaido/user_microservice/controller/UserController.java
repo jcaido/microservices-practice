@@ -61,8 +61,10 @@ public class UserController {
 
         return new ResponseEntity<>(userService.getBikes(userId), HttpStatus.OK);
     }
+
+    @CircuitBreaker(name = "bikesCB", fallbackMethod = "fallBackSaveBike")
     @PostMapping("/savebike/{userId}")
-    public ResponseEntity<BikeFeign> saveCar(@PathVariable("userId") int userId, @RequestBody BikeFeign bike) {
+    public ResponseEntity<BikeFeign> saveBike(@PathVariable("userId") int userId, @RequestBody BikeFeign bike) {
 
         return new ResponseEntity<>(userService.saveBike(userId, bike), HttpStatus.OK);
     }
