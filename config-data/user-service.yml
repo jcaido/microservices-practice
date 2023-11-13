@@ -8,9 +8,6 @@ spring:
         globally_quoted_identifiers_skip_column_definitions: true
   zipkin:
     base-url: http://localhost:9411
-  sleuth:
-    sampler:
-      probability: 1.0
 eureka:
   client:
     fetch-registry: true
@@ -48,5 +45,9 @@ resilience4j.circuitbreaker:
       waitDurationInOpenState: 5s
       failureRateThreshold: 50
       eventConsumerBufferSize: 10
+management:
+  tracing:
+    sampling:
+      probability: 1.0
     
             
