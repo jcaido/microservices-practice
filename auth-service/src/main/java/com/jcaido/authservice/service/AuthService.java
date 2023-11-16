@@ -15,10 +15,17 @@ public class AuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtService jwtService;
+
     public String saveUser(UserCredential userCredential) {
         userCredential.setPassword(passwordEncoder.encode(userCredential.getPassword()));
         userCredentialRepository.save(userCredential);
 
         return "user add succesfully!";
+    }
+
+    public String generateToken(String userName) {
+        return jwtService.generateToken(userName);
     }
 }
