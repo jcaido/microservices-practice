@@ -28,4 +28,8 @@ public class AuthService {
     public String generateToken(String userName) {
         return jwtService.generateToken(userName);
     }
+
+    public void validateToken(String token) {
+        jwtService.validateToken(token);
+    }
 }
