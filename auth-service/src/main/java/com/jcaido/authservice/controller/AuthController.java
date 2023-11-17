@@ -21,4 +21,10 @@ public class AuthController {
     public String getToken(UserCredential userCredential) {
         return authService.generateToken(userCredential.getName());
     }
+
+    @GetMapping("/validate")
+    public String validateToken(@RequestParam("token") String token) {
+        authService.validateToken(token);
+        return "Token is valid";
+    }
 }
