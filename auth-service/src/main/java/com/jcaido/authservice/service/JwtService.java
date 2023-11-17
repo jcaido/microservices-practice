@@ -34,4 +34,8 @@ public class JwtService {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, userName);
     }
+
+    public void validateToken(final String token) {
+        Jwts.parserBuilder().setSigningKey(getSignKey()).build().parseClaimsJws(token);
+    }
 }
