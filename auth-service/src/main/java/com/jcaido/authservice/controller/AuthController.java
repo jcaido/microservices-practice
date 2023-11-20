@@ -5,6 +5,8 @@ import com.jcaido.authservice.entity.UserCredential;
 import com.jcaido.authservice.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,7 +26,11 @@ public class AuthController {
 
     @PostMapping("/token")
     public String getToken(@RequestBody AuthRequest authRequest) {
-        return authService.generateToken(authRequest.getUsername());
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+        if (authenticate.isAuthenticated())
+            return authService.generateToken(authRequest.getUsername());
+        else
+            throw new RuntimeException("invalid access");
     }
 
     @GetMapping("/validate")
