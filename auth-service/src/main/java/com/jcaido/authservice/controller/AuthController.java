@@ -4,6 +4,7 @@ import com.jcaido.authservice.dto.AuthRequest;
 import com.jcaido.authservice.entity.UserCredential;
 import com.jcaido.authservice.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -12,6 +13,9 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @PostMapping("/register")
     public String addNewUser(@RequestBody UserCredential userCredential) {
