@@ -1,5 +1,6 @@
 package com.jcaido.authservice.controller;
 
+import com.jcaido.authservice.dto.AuthRequest;
 import com.jcaido.authservice.entity.UserCredential;
 import com.jcaido.authservice.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,9 @@ public class AuthController {
         return authService.saveUser(userCredential);
     }
 
-    @GetMapping("/token")
-    public String getToken(UserCredential userCredential) {
-        return authService.generateToken(userCredential.getName());
+    @PostMapping("/token")
+    public String getToken(@RequestBody AuthRequest authRequest) {
+        return authService.generateToken(authRequest.getUsername());
     }
 
     @GetMapping("/validate")
