@@ -12,7 +12,8 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     @Autowired
     private JwtUtil jwtUtil;
 
-
+    @Autowired
+    private RouteValidator routeValidator;
 
     @Override
     public GatewayFilter apply(Config config) {
