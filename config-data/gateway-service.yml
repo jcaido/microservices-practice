@@ -24,14 +24,20 @@ spring:
           uri: lb://user-service
           predicates:
             - Path=/user/**
+          filters:
+            - AuthenticationFilter
         - id: car-service
           uri: lb://car-service
           predicates:
             - Path=/car/**
+          filters:
+            - AuthenticationFilter
         - id: bike-service
           uri: lb://bike-service
           predicates:
             - Path=/bike/**
+          filters:
+            - AuthenticationFilter
         - id: auth-service
           uri: lb://auth-service
           predicates:
