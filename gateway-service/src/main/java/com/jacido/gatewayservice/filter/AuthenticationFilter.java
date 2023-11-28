@@ -28,11 +28,6 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
         return ((exchange, chain) -> {
             if (routeValidator.isSecured.test(exchange.getRequest())) {
                 if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                    //try {
-                    //    throw new CustomException(HttpStatus.BAD_REQUEST, "missing authorization header");
-                    //} catch (CustomException e) {
-                    //    throw new RuntimeException(e);
-                    //}
                     return Mono.error(new CustomException(HttpStatus.BAD_REQUEST, "missing authorization header"));
                 }
 
@@ -45,11 +40,6 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     jwtUtil.validateToken(authHeader);
                 } catch(Exception e) {
                     System.out.println("invalid access...!");
-                    //try {
-                    //    throw new CustomException(HttpStatus.BAD_REQUEST, "unauthorized access to application");
-                    //} catch (CustomException ex) {
-                    //    throw new RuntimeException(ex);
-                    //}
                     return Mono.error(new CustomException(HttpStatus.BAD_REQUEST, "unauthorized access to application"));
                 }
             }
