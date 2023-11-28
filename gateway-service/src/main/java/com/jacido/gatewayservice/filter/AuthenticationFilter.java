@@ -1,11 +1,14 @@
 package com.jacido.gatewayservice.filter;
 
+import com.jacido.gatewayservice.exception.CustomException;
 import com.jacido.gatewayservice.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 @Component
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
@@ -25,7 +28,12 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
         return ((exchange, chain) -> {
             if (routeValidator.isSecured.test(exchange.getRequest())) {
                 if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                    throw new RuntimeException("missing authorization header");
+                    //try {
+                    //    throw new CustomException(HttpStatus.BAD_REQUEST, "missing authorization header");
+                    //} catch (CustomException e) {
+                    //    throw new RuntimeException(e);
+                    //}
+                    return Mono.error(new CustomException(HttpStatus.BAD_REQUEST, "missing authorization header"));
                 }
 
                 String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
@@ -37,7 +45,12 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     jwtUtil.validateToken(authHeader);
                 } catch(Exception e) {
                     System.out.println("invalid access...!");
-                    throw new RuntimeException("unauthorized access to application");
+                    //try {
+                    //    throw new CustomException(HttpStatus.BAD_REQUEST, "unauthorized access to application");
+                    //} catch (CustomException ex) {
+                    //    throw new RuntimeException(ex);
+                    //}
+                    return Mono.error(new CustomException(HttpStatus.BAD_REQUEST, "unauthorized access to application"));
                 }
             }
             return chain.filter(exchange);
